@@ -45,7 +45,7 @@
     - PHPUnit 을 통한 테스트 로직들을 넣어두는 폴더입니다. 새로운 API는 항상 테스트케이스를 작성합니다. 적어도 일주일 한번은 테스트 케이스를 전부 돌려봅니다.
 - tests/Models
     - 클래스들의 테스트케이스를 작성합니다. 예를 들자면 아래와 같은 테스트 케이스를 작성합니다.
-        ```
+        ```php
         $champion = \App\Models\Lol\LolChampion::get(1);
         $this->assertTrue($champion->data->getSpells() instanceof App\Models\Lol\LolChampionSpellCollection);
         ```
@@ -76,7 +76,7 @@
 
 구축 방법은 여러가지가 있지만 대표적으로 아래와 같다.
 - 모델이 늘어날 수록 각 클래스에 어떤 변수가 존재하는지 모를 경우가 훨씬 더 늘어난다. ide-helper generator 로 해결 할 수 없는 경우라면, 클래스 상단에 프로퍼티로 `phpdoc` 을 입력해두어 자동완성이 먹히게끔 작업한다.
-    ```
+    ```php
     /**
      * Class LolMatchSetPlayerStat
      * @package App\Models\Draft\Game\lol
@@ -90,18 +90,18 @@
     class LolMatchSetPlayerStat extends Model
     ```
 - 컬렉션이지만 어떤걸 담고 있는 컬렉션이라고 표현하고 싶을 땐, 아래와 같이 `|` 를 써서 `MatchPlayerStat[]` 등으로 표현한다. 좀 더 명확한 설명을 위함이고, 주석의 확장판이라고 보면 된다. (이 phpdoc 은 사실 PHP 네이티브 `foreach` 문을 쓸 때 활용이 된다. 하지만 우리는 ->each(function(`MapPlayerStat` $stat){ }) 나 ->map 을 쓰니까 필요 없다. 그래서 사실 `@return Collection` 만 지정을 해도 문제는 없다.)
-    ```
+    ```php
     /** @var MatchPlayerStat[]|Collection $players */
     $players = $myTeam->players->where('isRequester', false);
     ```
-    ```
+    ```php
     /**
      * @return Collection|SummonerPlayedWith[]
      */
     public function getPlayedWith(): Collection
     ```
 - 변수들도 아래와 같이 최대한 자동완성을 구축한다. 
-    ```
+    ```php
     /** @var LolPlayer **/
     $player = $players->first();
     ```
@@ -118,7 +118,7 @@
 
 #### 메소드 파라미터
 메소드 파라미터는 특별한 이유가 있지 않는 한 객체로 한다. 강제는 아니다. (PHP의 타입힌트를 사용하는데 제약이 있다면 phpdoc 을 이용한다.)
-```
+```php
 public function isWinMatchTeam(LolMatchTeam $lolMatchTeam = null)
 {
     if (!$lolMatchTeam) {
@@ -130,7 +130,7 @@ public function isWinMatchTeam(LolMatchTeam $lolMatchTeam = null)
 ```
 
 하지만, 아래와 같이 Controller 에서 어쩔 수 없이 (예를 들자면 `eagerLoad`) ID 값으로만 호출해야 하는 경우에는 ID 값을 파라미터로 받도록 허용한다.
-```
+```php
 // 아래와 같이 만들면 matchTeamId 에 대한 eagerLoad 가 불가능하기 때문에, isWinMatchTeamId 메소드에서 파라미터를 int id 로 주는 것을 허용한다.
 'participants_teams'      => $lolMatchSet->lolMatchSetPlayerStats->groupBy('match_team_id')
     ->map(function (Collection $lolMatchSetPlayerStats, $matchTeamId) use ($lolMatchSet) {
@@ -139,7 +139,7 @@ public function isWinMatchTeam(LolMatchTeam $lolMatchTeam = null)
         ];
     })->values()
 ```
-```
+```php
 public function isWinMatchTeamId(int $matchTeamId)
 {
     return $this->win_match_team_id === $matchTeamId;
@@ -150,14 +150,14 @@ public function isWinMatchTeamId(int $matchTeamId)
 - 프로젝트 전체에 걸쳐 php native array 사용은 `절대 지양`하고 `Illuminate\Support\Collection` 사용. (Object 가 필요한 경우 `CustomModel` 생성)
 - `array` 대신 `Collection` 을 기본 배열의 단위로 사용하는 Laravel 에서는, `map`와 `each` 메소드를 통해 type-hint 를 이용하여 자동완성을 쉽게 구현 할 수 있다. 이를 활용하지 않고 php 의 foreach 문을 사용하는것은 기껏 phpdoc 과 ide-helper 로 열심히 자동완성을 구축해둔것이 무용지물이 될 수 있다.
 - `map` 과 `each` 함수는 익명함수를 응용한 메소드로써 익명함수 내부에는 새로운 scope 영역이 생성되기 때문에, 필요한 변수들을 `use` 로 끌어와야한다. 이는 자칫 귀찮고 복잡하다고 생각할 수 있지만 익명함수 내의 코드량이 늘어날 수록 예상치 못한 오류와 코드간의 혼동, 변수간의 혼동을 효과적으로 줄여줄 수 있는 예방책이 될 수 있다.
-```
+```php
 foreach ($lolMatches as $lolMatch) {
     echo $lolMatch->id;
     dd($lolMatch->lolMatchTeams); // 자동완성 안됨
 }
 ```
 위 코드는 아래와 같이 대체해서 쓰자. `map` 을 비롯해 비슷한 메소드가 매우 많으니 Laravel 공식 문서의 `Collection`을 참고.
-```
+```php
 $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
     echo $lolMatch->id;
     echo ($lolMatchTeam->lolMatchTeams[0]->id === $myMatchTeam->id);
@@ -174,7 +174,7 @@ $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
 
 #### 메소드에서 `get` 워드의 사용
 - `Laravel`의 `QueryBuilder` 객체로 응답이 구성되어지는 메소드는 `get` 을 붙이지 않는다. (사용하려면 `->get()` 을 해야하니까.)
-    ```
+    ```php
     class Test {
         public static function item($id) {
             return LolItem::whereId($id);
@@ -185,7 +185,7 @@ $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
     dd(Test::item(11)->first(), Test::item(11)->get()->count());
     ```
 - 반대로 데이터 자체를 바로 리턴 하는 메소드들은 get 을 붙인다.
-    ```
+    ```php
     class Test {
         public function getTest($id) {
             return LolItem::whereId($id)->first();
@@ -196,7 +196,7 @@ $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
     dd(Test::getItem(11));
     ```
 - 또 아래의 예처럼 될 수 있다.
-    ```
+    ```php
     public function getTitle()
     {
         $team1 = $this->lolMatchTeams->get(0);
@@ -220,7 +220,7 @@ $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
 #### Scope 활용
 - 특정 테이블에서 새로운 가공 데이터를 뽑을 때, 주요 필드(relation 이 걸려있는 필드들, `player_id`, `match_id`, `match_set_id`, ...)들이 포함되어야 하는 데이터 모델이라면 해당 모델 클래스에서 `Eloquent`의 `scope`를 이용해 쿼리를 만들 수 있도록 노력한다.
 - 이는 아래와 같은 상황에서 파라미터 수를 효과적으로 줄일 수 있는 방법이 될 수 있다.
-    ```
+    ```php
     // 선언
     class LolMatchSetPlayerStat extends Model {
         // 메소드 이름이 get 으로 시작하니, 코드 말미에 eloquent->get() 을 포함해야한다.
@@ -235,7 +235,7 @@ $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
     dd(LolMatchSetPlayerStat::getSelectTopPlayedChampionStats($lolPlayer, 10, $lolCompetition, $opponentLolTeam));
     ```
     아래의 코드로 개선이 가능하다. 결과는 동일.
-    ```
+    ```php
     // 선언
     class LolMatchSetPlayerStat extends Model {
         public function scopeSelectTopPlayedChampionStats(Builder $query, LolCompetition $competition = null, LolTeam $opponentLolTeam = null)
@@ -252,7 +252,7 @@ $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
 #### Global Scope 지양
 - 프로젝트 규모에 따라서 Global Scope 는 매우 유용한 기능이 될 수도 있다. 하지만 프로젝트와 데이터 규모가 커지고, 데이터 마이닝이 고도화 됨에 따라 Global Scope 기능을 활용하는건 매우 큰 독이 될 수 있다.
 - 아래는 잘못된 `GlobalScope` 의 예이다. 실제로 본 프로젝트에서는 `LolMatch`, `LolMatchSet` 클래스를 사용하는 곳이 수백곳이 되는데, 아래와 같은 글로벌 스코프가 걸려져있었고 데이터 마이닝이 고도화되고 데이터 수집 소스들이 늘어남에 따라 `withoutGlobalScope` 를 써야되는 상황이 끝이 없이 찾아왔다. 그래서 이 Global Scope 를 제거하는 대형 작업을 진행한 적이 있다. 이 작업은 객관적으로 매우 힘들고 외로운 작업이며, 누구도 하기 싫어하는 작업임을 공감하지 않는 사람은 아무도 없을 것이다. 예방하자.
-    ```
+    ```php
     class LolMatch extends Model {
         public static function boot()
         {
@@ -278,7 +278,7 @@ $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
 - 개발중 빠진 쿼리가 보인다면 적극적으로 고치고 커밋하자. 발견했으면서 귀찮아서 넘어가면, 보고 그냥 넘어간 것 자체도 본인 책임이다.
 - 미리 위에서 addslashes 하지말고, 무조건 Query 문을 작성할 때 addslashes 를 씌운다고 생각하면 2중 addslashes 를 한다던지, 안한다던지 하는 실수를 하지 않을 것이다. 옛날 옛적 2000년대 초중반에 작성된 PHP 코드들의 DB를 열어보면 `\'`, `\"`, `\\` 등의 역슬래쉬 데이터가 2중, 3중으로 들어가있는 것들을 보았는가? 이런 햇갈리는 코딩 규칙 때문이었다. 아직도 PDO 를 사용하지 않는 레거시 코드 작성자가 있다면 이 상황은 지금도 없어지지 않아을 것이다.
 - 이로 인한 사고 발생시 웹서버 상단에 WAF 설치 여부를 떠나, 그 책임은 개발자의 몫이 될 수 있다는 점을 잊지 말자. 
-    ```
+    ```php
     $tbSet        = LolMatchSet::table();
     $tbPlayerStat = LolMatchSetPlayerStat::table();
     $tbMatch      = LolMatch::table();
@@ -314,7 +314,7 @@ $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
 - `Eloquent` 의 `Model`, `Collection`과 유사한 클래스이다. 기본적인 `캐스팅`, `getter`, `setter` 등을 지원한다. 매우 비슷한 방식으로 동작한다.
 
 #### CustomModel 의 기본 구조
-```
+```php
 /**
  * Class MatchPlayerStat
  * @package App\Utils\OpggAPI\Models
@@ -343,7 +343,7 @@ class MatchPlayerStat extends CustomModel
         return new SummonerProfile($value);
     }
 ```
-```
+```php
 $a = new MatchPlayerStat([
     'position' => 'MID',
     ...
