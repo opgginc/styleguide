@@ -15,7 +15,7 @@
 ## Project Architecture
 ### Directory Structure
 - routes
-    - 모든 URL 들의 구성을 확 할 수 있다. 여기에 없으면 없는 URL 이다.
+    - 모든 URL 들의 구성을 확인 할 수 있다. 여기에 없으면 없는 URL 이다.
 - app/Http/Controllers
     - routes 와 직접적으로 연계된 컨트롤러이다. 모든 URL의 작동은 컨트롤러에서 한다.
 - app/Builders
