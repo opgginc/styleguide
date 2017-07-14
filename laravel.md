@@ -224,7 +224,7 @@ $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
 - `array` 대신 `Collection` 을 기본 배열의 단위로 사용하는 Laravel 에서는, `map`와 `each` 메소드를 통해 type-hint 를 이용하여 자동완성을 쉽게 구현 할 수 있다. 이를 활용하지 않고 php 의 foreach 문을 사용하는것은 기껏 phpdoc 과 ide-helper 로 열심히 자동완성을 구축해둔것이 무용지물이 될 수 있다.
 - `map` 과 `each` 함수는 익명함수를 응용한 메소드로써 익명함수 내부에는 새로운 `scope` 영역이 생성되기 때문에, 필요한 변수들을 `use` 로 끌어와야한다. 이는 자칫 귀찮고 복잡하다고 생각할 수 있지만 익명함수 내의 코드량이 늘어날 수록 예상치 못한 오류와 코드간의 혼동, 변수간의 혼동을 효과적으로 줄여줄 수 있는 예방책이 될 수 있다.
 
-###### 참고: `eloquent`의 `scope`와 여기서 말하는 `scope 영역`은 다릅니다. `block` 이라고 부르기도 한다.
+###### 참고: `eloquent`의 `scope`와 여기서 말하는 `scope 영역`은 다르다. `block` 이라고 부르기도 한다.
 
 ## DB, Eloquent, Model
 
