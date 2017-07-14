@@ -422,14 +422,14 @@ $a = new MatchPlayerStat([
 
     굳이 이렇게 하는 이유는 다음과 같다. 초기화에서 사용할 데이터에 오브젝트도 포함되기 시작하면 Nested 형태로 커스텀 모델을 생성해야 할 경우 통일성을 잊게 된다. 결국, 아래와 같은 '개발자의 깊은 고뇌가 담긴 코드'가 나오게 되버릴 것이다. 모든 커스텀 모델을 관리할 때 아래와 같은 IF문을 반복하게 될 용감한 첫 걸음이 될 것이다.
     ```php
-    # Before
+    # First step
     public function getSummonerProfileAttribute($value)
     {
       return new SummonerProfile($value);
     }
     ```
     ```php
-    # After
+    # 0000th step (Terrible case)
     public function getSummonerProfileAttribute($value)
     {
       if (is_array($value)) {
