@@ -236,7 +236,7 @@ $lolMatches->each(function(LolMatch $lolMatch) use ($myMatchTeam) {
   - 특성상 단순 출력 용도의 느낌이 강한 데이터의 경우
 
 ### 메소드에서 `get` 워드의 사용
-- `Laravel`의 `QueryBuilder` 객체로 응답이 구성되어지는 메소드는 `get` 을 붙이지 않는다. (사용하려면 `->get()` 을 해야하니까.)
+- `Laravel`의 `QueryBuilder` 객체로 응답이 구성되어지는 메소드는 `get` 을 붙이지 않는다. (사용하려면 `->get()` 을 해야하니까. `$a->getItem()->get()` 은 이상하잖아.)
     ```php
     class Test {
         public static function item($id) {
