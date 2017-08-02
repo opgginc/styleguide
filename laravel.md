@@ -9,8 +9,9 @@
 - IDE는 PHPStorm 를 기준으로 설명한다.
 
 ## Laravel 로 프로젝트를 시작하기 전에 읽어야 할 글
-- 공식 [Laravel 문서](https://laravel.com/docs/)
 - [PHP The Right Way](http://modernpug.github.io/php-the-right-way/)
+- [PHP, 잘못된 디자인의 프랙탈](https://php-a-fractal-of-bad-design-kr.github.io/)
+- 공식 [Laravel 문서](https://laravel.com/docs/)
 
 # Project Architecture
 ## Directory Structure
