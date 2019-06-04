@@ -1,5 +1,4 @@
-OP.GG Style Guides
-===================
+# OP.GG Style Guides
 
 OP.GG 의 모든 프로젝트는 각자 개별적인 디자인 스타일들을 가지고 있습니다. 하지만 이를 최대한 통일한다면 좀 더 코드 관리나 접근에 대해서 유연해질 수 있습니다. 진입장벽을 허무는 것이죠. 그동안은 의미 있는 컨벤션이 사내에 존재하지 않았지만 점차 컨벤션(Best Practice)을 정해나가려고 합니다. 그리고 많은 피드백을 통한 개선을 위해 이 문서를 오픈소스로 공개합니다.
 
@@ -10,5 +9,6 @@ OP.GG 의 모든 프로젝트는 각자 개별적인 디자인 스타일들을 �
 현재는 아래의 문서만이 관리되고 있습니다. 계속 늘려나갈 예정입니다.
 
 - [Laravel 5.X (PHP)][laravel]
+- [React](react)
 
 [laravel]: https://github.com/opgginc/styleguide/blob/master/laravel.md
